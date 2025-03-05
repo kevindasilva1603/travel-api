@@ -1,11 +1,22 @@
 import { Trip } from "../models/index.js";
 
-// Créer un voyage
+// Créer un voyage avec validation des erreurs
 export const createTrip = async (req, res) => {
     const { destination, startDate, endDate } = req.body;
 
-    if (!destination || !startDate || !endDate) {
-        return res.status(400).json({ message: "All fields are required." });
+    if (!destination) {
+        return res.status(400).json({ message: "Destination is required" });
+    }
+    if (!startDate) {
+        return res.status(400).json({ message: "Start date is required" });
+    }
+    if (!endDate) {
+        return res.status(400).json({ message: "End date is required" });
+    }
+    if (new Date(startDate) >= new Date(endDate)) {
+        return res
+            .status(400)
+            .json({ message: "Start date must be before end date" });
     }
 
     try {
@@ -36,6 +47,28 @@ export const listTrips = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             message: "Error fetching trips.",
+            error: error.message,
+        });
+    }
+};
+
+// Récupérer un voyage par ID avec validation 404
+export const getTripById = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const trip = await Trip.findOne({
+            where: { id, UserId: req.user.id },
+        });
+
+        if (!trip) {
+            return res.status(404).json({ message: "Trip not found" });
+        }
+
+        res.json(trip);
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching trip.",
             error: error.message,
         });
     }
