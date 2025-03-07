@@ -8,18 +8,26 @@ const registerSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-const tripSchema = z.object({
-    destination: z.string().min(1, "Destination is required"),
-    startDate: z
-        .string()
-        .regex(/\d{4}-\d{2}-\d{2}/, "Invalid date format (YYYY-MM-DD)"),
-    endDate: z
-        .string()
-        .regex(/\d{4}-\d{2}-\d{2}/, "Invalid date format (YYYY-MM-DD)"),
-});
+const tripSchema = z
+    .object({
+        destination: z.string().min(1, "Destination is required"),
+        startDate: z
+            .string()
+            .regex(/\d{4}-\d{2}-\d{2}/, "Invalid date format (YYYY-MM-DD)"),
+        endDate: z
+            .string()
+            .regex(/\d{4}-\d{2}-\d{2}/, "Invalid date format (YYYY-MM-DD)"),
+    })
+    .refine((data) => data.startDate < data.endDate, {
+        message: "startDate must be before endDate",
+        path: ["startDate"],
+    });
 
 const itemSchema = z.object({
-    name: z.string().min(1, "Item name is required"),
+    name: z
+        .string()
+        .min(1, "Item name is required")
+        .max(100, "Item name must not exceed 100 characters"),
     quantity: z.number().min(1, "Quantity must be at least 1"),
 });
 

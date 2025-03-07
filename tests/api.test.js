@@ -13,12 +13,12 @@ describe("Tests d'intégration de l'API Travel Packing List", () => {
     beforeAll(async () => {
         await sequelize.sync({ force: true });
 
-        // ✅ Inscription d'un utilisateur
+        // Inscription d'un utilisateur
         await request(app)
             .post("/auth/register")
             .send({ email: "test@example.com", password: "password123" });
 
-        // ✅ Connexion et récupération du token JWT
+        //  Connexion et récupération du token JWT
         const loginResponse = await request(app)
             .post("/auth/login")
             .send({ email: "test@example.com", password: "password123" });
@@ -26,7 +26,7 @@ describe("Tests d'intégration de l'API Travel Packing List", () => {
         token = `Bearer ${loginResponse.body.token}`;
     });
 
-    // 🚀 AUTHENTIFICATION
+    // AUTHENTIFICATION
     it("Refuser une requête sans token (401)", async () => {
         const res = await request(app).get("/trips");
         expect(res.statusCode).toBe(401);
@@ -67,7 +67,7 @@ describe("Tests d'intégration de l'API Travel Packing List", () => {
         expect(res.statusCode).toBe(409);
     });
 
-    // 🚀 TRIPS
+    //  TRIPS
     it("Créer un voyage valide", async () => {
         const res = await request(app)
             .post("/trips")
@@ -112,7 +112,7 @@ describe("Tests d'intégration de l'API Travel Packing List", () => {
         expect(res.statusCode).toBe(404);
     });
 
-    // 🚀 ITEMS
+    //  ITEMS
     it("Ajouter un item à un voyage", async () => {
         const res = await request(app)
             .post(`/items/${tripId}`)
